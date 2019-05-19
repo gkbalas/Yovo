@@ -1,0 +1,66 @@
+﻿@model Yovo.Viewmodel.HouseSpecsViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    footer, hr {
+        display: none!important;
+    }
+</style>
+
+<div class="col-md-8" style="margin:0 auto; border-right: solid; border-radius: 10px; border-bottom: solid; box-shadow: 7px 10px 26px lightgrey; border-color: lightgrey;">
+    <div class="col-md-6" style="float: left; ">
+
+        @{
+            var base64 = Convert.ToBase64String(Model.HouseImg.Image);
+            var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+
+        }
+
+        <img src="@imgsrc"  />
+
+    </div>
+    <div class="col-md-6" style="float: left; border-right: solid; border-radius: 10px; border-bottom: solid; box-shadow: 7px 10px 26px lightgrey; border-color: lightgrey;">
+        <div class="col-md-12"><p style="font-size: larger;border-bottom: 1px solid;">Ιδιοκτήτης: <strong>@Html.DisplayFor(model => model.House.Owner.FirstName) @Html.DisplayFor(model => model.House.Owner.LastName)</strong></p></div>
+        <div class="col-md-12"><p style="font-size: larger;border-bottom: 1px solid;">Επισκέπτες: <strong>@Html.DisplayFor(model => model.House.Visitors)</strong></p></div>
+        <div class="col-md-12"><p style="font-size: larger;border-bottom: 1px solid;">Τετραγωνικά: <strong>@Html.DisplayFor(model => model.House.SquareMeters)</strong></p></div>
+        <div class="col-md-12"><p style="font-size: larger;border-bottom: 1px solid;">Δωμάτια: <strong>@Html.DisplayFor(model => model.House.Rooms)</strong></p></div>
+        <div class="col-md-12"><p style="font-size: larger;border-bottom: 1px solid;"> Επιπλέον:<strong>
+        
+            @foreach (var item in Model.House.Features)
+        {<br /> @Html.DisplayFor(modelItem => item.Description)}
+    </strong>
+</p></div>
+        <div class="col-md-12"><p style="font-size: larger;border-bottom: 1px solid;">Περιγραφή: <strong> @Html.DisplayFor(model => model.House.Description)</strong></p></div>
+
+        <p><strong></strong></p>
+    </div>
+    <div class="col-md-12">
+        @if (ViewBag.UserId == Model.House.Owner.Id)
+        {
+            <div class="col-md-2 btn btn-outline-primary waves-effect" style="float:left; margin-right: 20px;">
+                @Html.ActionLink("Availability", "Availability", "Reservations", new { houseId = Model.House.Id }, null)
+            </div>
+            <div class="col-md-2 btn btn-outline-primary waves-effect" style="float:left; margin-right: 20px;">
+                @Html.ActionLink("House Bookings", "HouseReservations", "Reservations", new { id = Model.House.Id }, null)
+            </div>
+            <div class="col-md-2 btn btn-outline-primary waves-effect" style="float:left; margin-right: 20px;">
+                @Html.ActionLink("Edit", "Edit", new { id = Model.House.Id })
+            </div>
+            <div class="col-md-2 btn btn-outline-danger waves-effect" style="float:left; margin-right: 20px;">
+                @Html.ActionLink("Delete House", "Delete", new { id = Model.House.Id })
+            </div>
+        }
+        else
+        {
+            <div class="col-md-2 btn btn-outline-success waves-effect" style="float:left; margin-right: 20px;">
+                @Html.ActionLink("Book", "Book", "Reservations", new { houseId = Model.House.Id }, null)
+            </div>
+        }
+        <div class="col-md-2 btn btn-outline-primary waves-effect" style="float: left; margin-right: 20px;">
+            @Html.ActionLink("Back To List", "")
+        </div>
+    </div>
+        </div>

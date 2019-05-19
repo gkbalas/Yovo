@@ -1,0 +1,260 @@
+﻿@model Yovo.Viewmodel.SearchVM
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<script>
+
+
+
+//Script for Bing Maps START
+    var map, infobox;
+    function GetMap()
+    {
+
+        map = new Microsoft.Maps.Map('#myMap', {
+            center: new Microsoft.Maps.Location(39.305035, 24.029026),
+            zoom: 6,
+            disableScrollWheelZoom: true
+        });
+
+        //Create an infobox at the center of the map but don't show it.
+        infobox = new Microsoft.Maps.Infobox(map.getCenter(), {
+            visible: false
+        });
+
+        //Assign the infobox to a map instance.
+        infobox.setMap(map);
+
+        //Create random locations in the map bounds.
+        /*var randomLocations = Microsoft.Maps.TestDataGenerator.getLocations(5, map.getBounds());*/
+
+        var pushPins = new Array(@Model.Address.Count());
+        var counter = 0;
+        var houseArray = [];
+        @foreach (var item in Model.Address)
+        {
+
+            <text>
+
+            pushPins[counter] = {
+                'lat': @Convert.ToDouble(item.Latitude),
+                'lng': @Convert.ToDouble(item.Longitude) };
+
+
+        houseArray[counter] = {'title':  "@(item.House.Title)", 'region' : "@(item.Region)" ,'descr': "@(item.House.Description)" } ;
+            counter = counter + 1;
+            </text>
+        }
+        var locations = [];
+        for (var i = 0; i < pushPins.length; i++) {
+            locations[i] = new Microsoft.Maps.Location(pushPins[i].lat, pushPins[i].lng);
+            var pin = new Microsoft.Maps.Pushpin(locations[i]);
+
+            //Store some metadata with the pushpin.
+            pin.metadata = {
+                title: houseArray[i].title,
+                region: houseArray[i].region,
+                description: houseArray[i].descr
+            };
+
+            //Add a click event handler to the pushpin.
+            Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
+            
+            //Add pushpin to the map.
+            map.entities.push(pin);
+        }
+
+    }
+
+    function pushpinClicked(e) {
+        //Make sure the infobox has metadata to display.
+        if (e.target.metadata) {
+            //Set the infobox options with the metadata of the pushpin.
+            infobox.setOptions({
+                location: e.target.getLocation(),
+                title: e.target.metadata.title,
+                description: e.target.metadata.description,
+                visible: true
+            });
+        }
+    }
+
+//Script for Bing Maps END
+
+</script>
+<script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AjtUzWJBHlI3Ma_Ke6Qv2fGRXEs0ua5hUQi54ECwfXTiWsitll4AkETZDihjcfeI' async defer></script>
+
+@{ bool areSame = false;}
+
+<body onload="animate();">
+    <div class="welcome-area wow fadeInUp" data-wow-delay="200ms">
+        <div id="myMap" style="position:relative;width:100%;height:100%;float:left"></div>
+    </div>
+    <div class="rehomes-search-form-area wow fadeInUp" data-wow-delay="200ms">
+        <div class="container">
+            <div class="rehomes-search-form">
+                @using (Html.BeginForm("SearchResults", "Houses", FormMethod.Get))
+                {
+                    <div class="row">
+                        <div class="col-12 col-lg-10">
+                            <div class="row">
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <select name="city" id="city" class="form-control">
+                                        <option value="0">City</option>
+                                        @for (var i = 0; i < Model.Address.Count; i++)
+                                        {
+                                            for (var y = 0; y < i; y++)
+                                            {
+                                                if (Model.Address[y].Country == Model.Address[i].Country)
+                                                {
+                                                    areSame = true;
+                                                }
+                                            }
+                                            if (!areSame)
+                                            {
+                                                <option value="@Model.Address[i].Country" >@Model.Address[i].Country</option>
+                                            }
+
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3" >
+                                    <select name="region" id="region" class="form-control">
+                                        <option value="0" id="regionoption">Region</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    @Html.TextBox("Rooms", null, new { @class = "form-control", @type = "number", @placeholder = "Rooms", @min = 1, @name = "Rooms" })
+                                </div>
+
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <div class="slider-range mb-15">
+                                        <div class="range-price text-white">Price [@Model.MinPrice - @Model.MaxPrice]$</div>
+                                        <div name="price" id="price" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-min="@Convert.ToInt32(Model.MinPrice)" data-max="@Convert.ToInt32(Model.MaxPrice)" data-unit="$" data-value-min="@Model.MinPrice" data-value-max="@Model.MaxPrice" data-label-result="Price">
+                                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <div class="slider-range mb-15">
+                                        <div class="range-size text-white">Size [@Model.Minsqr - @Model.Maxsqr]sqFt</div>
+                                        <div name="SquareMeters" data-min="@Convert.ToInt32(Model.Minsqr)" data-max="@Convert.ToInt32(Model.Maxsqr)" data-unit="sqFt" class="slider-range-size ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="@Convert.ToInt32(Model.Minsqr)" data-value-max="@Convert.ToInt32(Model.Maxsqr)" data-label-result="Size">
+                                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-2">
+                            <button type="submit" class="btn rehomes-search-btn">Search</button>
+                            <!--Html.ActionLink("Search", "SearchResults", "Houses", new { search = region }, null)-->
+                        </div>
+                    </div>
+                }
+            </div>
+
+
+        </div>
+    </div>
+    <!-- **** Sale area Start **** -->
+    <section class="rehome-house-sale-area section-padding-100-60">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-heading text-center wow fadeInUp" data-wow-delay="200ms">
+                        <h2>Top New In <span>Greece</span></h2>
+                        <p>These are the best deals and deals. All in Greece</p>
+                    </div>
+                </div>
+
+                <!-- Single Property Area -->
+                @foreach (var house in Model.House)
+                {
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="single-property-area wow fadeInUp" data-wow-delay="200ms">
+                            <!-- Property Thumb -->
+                            <div class="property-thumb">
+                                @{
+                                    var base64 = Convert.ToBase64String(Model.HouseImg.FirstOrDefault(img => img.HouseId == house.Id).Image);
+                                    var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+
+                                }
+                                <img src="@imgsrc" style="max-height: 200px; height: 100%" />
+                            </div>
+                            <!-- Property Description -->
+                            <div class="property-desc-area">
+                                <!-- Property Title & Seller -->
+                                <div class="property-title-seller d-flex justify-content-between">
+                                    <!-- Title -->
+                                    <div class="property-title">
+                                        <h4>@Model.Address.FirstOrDefault(adr => adr.HouseId == house.Id).Country</h4>
+                                        <p><i class="fa fa-map-marker" aria-hidden="true"></i>@Model.Address.FirstOrDefault(adr => adr.HouseId == house.Id).Region</p>
+                                    </div>
+                                    <!-- Seller -->
+                                    <div class="property-seller">
+                                        <p>Seller:</p>
+                                        <h6>@Model.Address.FirstOrDefault(adr => adr.HouseId == house.Id).House.Owner.LastName</h6>
+                                    </div>
+                                </div>
+                                <!-- Property Info -->
+                                <div class="property-info-area d-flex flex-wrap">
+                                    <p>Sqft: <span>@Model.Address.FirstOrDefault(adr => adr.HouseId == house.Id).House.SquareMeters</span></p>
+                                    <p>Rooms: <span>@Model.Address.FirstOrDefault(adr => adr.HouseId == house.Id).House.Rooms</span></p>
+                                    <p>Visitors: <span>@Model.Address.FirstOrDefault(adr => adr.HouseId == house.Id).House.Visitors</span></p>
+                                </div>
+                            </div>
+
+                            <!-- Property Price -->
+                            <div class="property-price">
+
+                                <p class="badge-sale"><a href="Houses/Details/@house.Id">For Rent</a></p>
+                                <p class="price">€ @Model.Address.FirstOrDefault(adr => adr.HouseId == house.Id).House.Price /per Day</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+        </div>
+    </section>
+    <!-- **** Sale Area End **** -->
+</body>
+@*<script src="~/Scripts/jquery.min.js"></script>*@
+<script>
+    var city = document.getElementById("city");
+    var select2 = document.getElementById("region");
+        var regions = [];
+        
+    city.onchange = function () {
+        var counter = 0;
+        var len = select2.options.length;
+        for (var i = 1; i < len; i++) {
+            select2.options[1].remove();
+        }
+        @foreach(var adr in Model.Address)
+        {
+            <Text>
+            if ("@(adr.Country)" == city.value) {
+                regions[counter] = { 'reg' : "@(adr.Region)"} ;
+                counter++;
+            }
+        </Text>
+        }
+            for (var i = 0; i < counter; i++) {
+                var o = document.createElement("option");
+                o.value = regions[i].reg;   
+                o.text = regions[i].reg;
+                select2.add(o);
+        }
+
+        select2.style.display = "inline";
+        }
+</script>

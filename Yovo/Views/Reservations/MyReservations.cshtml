@@ -1,0 +1,93 @@
+﻿@model IEnumerable<Yovo.Models.Reservation>
+
+@{
+    ViewBag.Title = "Index";
+    string id = ViewBag.UserId;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<body class="col-xs-12 col-sm-12 col-md-6 col-lg-12">
+    <div class="row">
+        <div class="@(User.IsInRole("Owner") ? "col-xs-6 col-sm-6 col-md-6 col-lg-6": "col-xs-12 col-sm-12 col-md-12 col-lg-6")" name="leftTable">
+            <h4>My Bookings</h4>
+            <table class="table">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.House.Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FromDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ToDate)
+                    </th>
+                    <th>@Html.DisplayNameFor(model => model.Renter.FirstName)</th>
+                </tr>
+
+                @foreach (var item in Model.Where(r => r.Renter != null))
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.House.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FromDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ToDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Renter.FirstName)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+        <div class="@(User.IsInRole("Owner") ? "col-xs-6 col-sm-6 col-md-6 col-lg-6": "col-xs-12 col-sm-12 col-md-6 col-lg-6")" name="rightTable" >
+            @if (User.IsInRole("Owner"))
+            {
+                <h4>My Houses' Bookings</h4>
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.House.Title)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FromDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ToDate)
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model.Where(res => res.House.Owner.Id == id))
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.House.Title)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FromDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ToDate)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+
+            }
+        </div>
+    </div>
+</body>
+<br />

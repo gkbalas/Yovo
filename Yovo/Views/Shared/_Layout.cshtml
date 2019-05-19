@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @*@Styles.Render("~/style.css")*@
+    @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        #logoutForm {
+            display: inline-block;
+            clear: both;
+            position: inherit;
+            z-index: 10;
+        }
+    </style>
+    <link href="~/style.css" rel="stylesheet" />
+    
+    <script src="~/gulpfile.js"></script>
+
+</head>
+<body onload="animate();">
+    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color: currentColor">
+        <div style="width: 100%">
+            <header class="header-area">
+                <!-- Main Header Start -->
+                <div class="main-header-area animated" style="background-color: currentColor">
+                    <div class="classy-nav-container breakpoint-off">
+                        <div>
+                            <!-- Classy Menu -->
+                            <nav class="classy-navbar justify-content-between" id="rehomesNav">
+
+                                <!-- Logo -->
+                                <canvas id="mycanvas" height="60" width="150" onclick="click" onmouseover="" style="cursor: pointer;"></canvas>
+
+                                    <!-- Navbar Toggler -->
+                                    <div class="classy-navbar-toggler">
+                                        <span class="navbarToggler"><span></span><span></span><span></span></span>
+                                    </div>
+
+                                    <!-- Menu -->
+                                    <div class="classy-menu" style="width: 100%">
+                                        <!-- Menu Close Button -->
+                                        <div class="classycloseIcon">
+                                            <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                                        </div>
+                                        <!-- Nav Start -->
+                                        <div class="classynav col-md-12">
+                                            <ul id="nav" class="col-md-8" style="color: white">
+                                                <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                                                <li>@Html.ActionLink("About", "About", "Home")</li>
+                                                <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                                                @*<li>@Html.ActionLink("Houses", "Index", "Houses")</li>*@
+                                                @Html.Partial("_LoginPartial")
+                                            </ul>
+                                            
+                                            <!-- Contact btn -->
+                                            <!--
+    <div class="contact-btn mt-3 mt-lg-0 ml-3 ml-lg-5">
+        <a href="#">Contact Us</a>
+    </div>
+        -->
+                                            <!-- Nav End -->
+                                        </div>
+                                        
+                                    </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                </header>
+        </div>
+    </div>
+    <div class="body-content">
+        @RenderBody()
+        <hr />
+        <footer style="display:inline">
+            <p align="left">&copy; @DateTime.Now.Year - You Only Vacate Once</p>
+            <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5cdad7bb11dc6aca"></script>        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <!-- **** All JS Files ***** -->
+    
+    <!-- Popper -->
+    <script src="~/Scripts/popper.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <!-- All Plugins -->
+    <script src="~/Scripts/rehomes.bundle.js"></script>
+    <!-- Active -->
+    <script src="~/Scripts/default-assets/active.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+    var pattern = new Image();
+    pattern.src = ("http://localhost:51597/Logo/YovoFlag.jpg");
+    var ph = pattern.height;
+
+    
+    function animate() {
+        setInterval(drawShape, 500);
+    }
+
+    function drawShape() {
+        var canvas = document.getElementById('mycanvas');
+        var ctx = canvas.getContext('2d');
+        var iw = pattern.width;
+        var ih = pattern.height;
+        ctx.clearRect(0, 0, 400, 400);
+        canvas.addEventListener('click', function () {
+            window.location = "http://localhost:51597";
+        })
+        if (ph <= 0) {
+            ph = ih;
+        }
+        else {
+            ph -= 20;
+        }
+
+        for (var x = 0; x < iw; x++) {
+            // 8 = height of wave, 20 = frequency, 38 = vertical offset
+            var y = 8 * Math.sin((x + ph) / 15) + 4;
+            ctx.drawImage(pattern, x, 0, 1, ih, x, y, 1, ih);
+        }
+        //http://bucarotechelp.com/design/jseasy/81071103.asp
+    }
+</script>

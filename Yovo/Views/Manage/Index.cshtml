@@ -1,0 +1,68 @@
+﻿@model Yovo.Models.ApplicationUser
+@{
+    ViewBag.Title = "Manage";
+}
+<style>
+    footer{
+        display: none;
+    }
+</style>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div class="col-md-6" style="margin: 0 auto; border-right: solid; border-radius: 10px; border-bottom: solid; box-shadow: 7px 10px 26px lightgrey; border-color: lightgrey;">
+    <h4>Change your account settings</h4>
+    <hr />
+    <div class="col-md-12">
+        <p>
+            <strong>Name: @Model.FirstName @Model.LastName</strong>
+        </p>
+    </div>
+    <div class="col-md-12">
+        <p>
+            <strong>Email: @Model.Email</strong>
+        </p>
+    </div>
+    <div class="col-md-12">
+        <p>
+            @if (@Model.Houses.Count != 0)
+            {<strong>
+                    Role: Owner
+                </strong>
+            }
+            else
+            {
+                <strong>
+                    Role: Renter
+                </strong>
+            }
+        </p>
+    </div>
+    <div class="col-md-12">
+        <p>
+            <strong>Password: </strong>[@if (Model.PasswordHash != null)
+            {@Html.ActionLink("Change your password", "ChangePassword")}
+        else
+        {@Html.ActionLink("Create", "SetPassword")}]
+        </p>
+    </div>
+    <div class="col-md-12">
+        <p>
+            <strong>External Logins: </strong>@Model.Logins.Count [
+            @Html.ActionLink("Manage", "ManageLogins") ]
+        </p>
+    </div>
+    <hr />
+    <div class="col-md-12">
+        <div class="col-md-3 btn btn-outline-primary waves-effect">@Html.ActionLink("Add House", "Create", "Houses")</div>
+        @if (@Model.Houses.Count != 0)
+        {
+            <div class="col-md-3 btn btn-outline-primary waves-effect">@Html.ActionLink("My Houses", "MyHouses", "Houses")</div>
+        }
+
+        <div class="col-md-3 btn btn-outline-primary waves-effect">@Html.ActionLink("My Reservations", "MyReservations", "Reservations")</div>
+    </div>
+
+
+
+
+</div>

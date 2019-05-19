@@ -1,0 +1,63 @@
+﻿@model Yovo.Viewmodel.SearchVM
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>My Houses</h4>
+<div class="row">
+    @foreach (var item in Model.House)
+    {
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="single-property-area wow fadeInUp" data-wow-delay="200ms">
+                <!-- Property Thumb -->
+                <div class="property-thumb">
+                    @{
+                        var base64 = Convert.ToBase64String(Model.HouseImg.FirstOrDefault(img => img.HouseId == item.Id).Image);
+                        var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+
+                    }
+                    <img src="@imgsrc" style="max-height: 200px; height: 100%" />
+                </div>
+                <!-- Property Description -->
+                <div class="property-desc-area">
+                    <!-- Property Title & Seller -->
+                    <div class="property-title-seller d-flex justify-content-between">
+                        <!-- Title -->
+                        <div class="property-title">
+                            <h4>@Html.DisplayFor(modelItem => item.Title)</h4>
+                            <p><i class="fa fa-map-marker" aria-hidden="true"></i>@Html.DisplayFor(modelItem => item.Description)</p>
+                        </div>
+                        <!-- Seller -->
+                        <div class="property-seller">
+                            <p>Owner:</p>
+                            <h6></h6>
+                        </div>
+                    </div>
+                    <!-- Property Info -->
+                    <div class="property-info-area d-flex flex-wrap">
+                        <p>Sqft: <span>@Html.DisplayFor(modelItem => item.SquareMeters)</span></p>
+                        <p>Rooms: <span>@Html.DisplayFor(modelItem => item.Rooms)</span></p>
+                        <p>Visitors: <span>@Html.DisplayFor(modelItem => item.Visitors)</span></p>
+                        <p>Owner: <span>@Html.DisplayFor(modelItem => item.Owner.FirstName) @Html.DisplayFor(modelItem => item.Owner.LastName)</span></p>
+                    </div>
+                </div>
+
+                <!-- Property Price -->
+                <div class="property-price">
+
+                    <p class="badge-sale"> @Html.ActionLink("Details", "Details", new { id = item.Id })</p>
+                    <p class="price">€ @Html.DisplayFor(modelItem => item.Price) /per Day</p>
+                </div>
+            </div>
+        </div>
+    }
+
+
+</div>
+
+
+
+
+

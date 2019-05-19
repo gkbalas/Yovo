@@ -1,0 +1,81 @@
+﻿@model Yovo.Viewmodel.ReservationCheckVM
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    TempData["House"] = ViewBag.House;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h2>Booking</h2>
+
+    @ViewBag.House.Title
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.NewReservation.FromDate, new { @id = "hiddenFromDate" })
+    @Html.HiddenFor(model => model.NewReservation.ToDate, new { @id = "hiddenToDate" })
+    @Html.HiddenFor(model => model.OldReservations, new { @id = "oldReservations" })
+
+    <input type="text" name="daterange" class="form-control col-md-4" style="margin:0 auto" value="" />
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+
+    
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script>
+        var y = "";
+        $.get("http://localhost:51597/Reservations/HidJson", { houseId: @ViewBag.House.Id }, function (data) {
+            y = data;
+        }); 
+        var count = @Html.Raw(Model.OldReservations.Count);
+        $(function () {
+            $('input[name="daterange"]').daterangepicker({
+                opens: 'left',
+                isInvalidDate: function (item) {
+                    try {
+                        for (i = 0; i < count; i++) {
+                            var fromDate = new Date(parseInt(y[i].FromDate.substr(6)));
+                            var toDate = new Date(parseInt(y[i].ToDate.substr(6)));
+                            if (item >= fromDate && item <= toDate) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    } catch (e) {
+                        return false;
+                    }
+
+                }
+            }, function (start, end, label) {
+                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                document.getElementById("hiddenFromDate").val = start.format('DD/MM/YYYY');
+                document.getElementById("hiddenToDate").value = end.format('DD/MM/YYYY');
+                var x = document.getElementById("hiddenFromDate").value = start.format('DD/MM/YYYY');
+                var y = document.getElementById("hiddenToDate").value = end.format('DD/MM/YYYY');
+
+            });
+        });
+    </script>
+}

@@ -1,0 +1,65 @@
+﻿@model Yovo.Viewmodel.SearchVM
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+   
+
+        <section class="rehome-house-sale-area section-padding-100-60">
+            <div class="container">
+                <div class="row">
+                    <!-- Single Property Area --> 
+                    @foreach (var item in Model.Address)
+                    {
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="single-property-area wow fadeInUp" data-wow-delay="200ms">
+                                <!-- Property Thumb -->
+                                <div class="property-thumb">
+                                    @{
+                                        var base64 = Convert.ToBase64String(Model.HouseImg.FirstOrDefault(img => img.HouseId == item.House.Id).Image);
+                                        var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+
+                                    }
+                                    <img src="@imgsrc" />
+                                </div>
+                                <!-- Property Description -->
+                                <div class="property-desc-area">
+                                    <!-- Property Title & Seller -->
+                                    <div class="property-title-seller d-flex justify-content-between">
+                                        <!-- Title -->
+                                        <div class="property-title">
+                                            <h4>@Model.Address.FirstOrDefault(adr => adr.HouseId == item.House.Id).Country</h4>
+                                            <p><i class="fa fa-map-marker" aria-hidden="true"></i>@Model.Address.FirstOrDefault(adr => adr.HouseId == item.House.Id).Region</p>
+                                        </div>
+                                        <!-- Seller -->
+                                        <div class="property-seller">
+                                            <p>Seller:</p>
+                                            <h6>@Model.Address.FirstOrDefault(adr => adr.HouseId == item.House.Id).House.Owner.LastName</h6>
+                                        </div>
+                                    </div>
+                                    <!-- Property Info -->
+                                    <div class="property-info-area d-flex flex-wrap">
+                                        <p>Sqft: <span>@Model.Address.FirstOrDefault(adr => adr.HouseId == item.House.Id).House.SquareMeters</span></p>
+                                        <p>Rooms: <span>@Model.Address.FirstOrDefault(adr => adr.HouseId == item.House.Id).House.Rooms</span></p>
+                                        <p>Visitors: <span>@Model.Address.FirstOrDefault(adr => adr.HouseId == item.House.Id).House.Visitors</span></p>
+                                    </div>
+                                </div>
+
+                                <!-- Property Price -->
+                                <div class="property-price">
+
+                                    <p class="badge-sale"><a href="Details/@item.House.Id">For Rent</a></p>
+                                    <p class="price">€ @Model.Address.FirstOrDefault(adr => adr.HouseId == item.House.Id).House.Price /per Day</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                </div>
+            </section>
+                                    
+                    
